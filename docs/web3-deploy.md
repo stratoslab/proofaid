@@ -45,6 +45,12 @@ This also updates `dashboard/public/contracts/abis.json` for the React build.
 5. Switch network (Sepolia/Mainnet/devnet)
 6. Use the on-chain forms to submit transactions
 
+## Voucher model
+
+- `AidVoucher` is implemented as ERC-1155.
+- Each issued voucher mints one non-transferable token ID.
+- Redeeming a voucher burns that token.
+
 ## 5. Devnet support
 
 In dashboard:

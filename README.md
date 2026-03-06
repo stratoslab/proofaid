@@ -55,7 +55,7 @@ The dashboard supports:
 - network switching: Alfajores, Celo Mainnet, custom devnet
 - create program on-chain (`AidProgram`)
 - register beneficiary hash (`BeneficiaryRegistry`)
-- issue/redeem vouchers (`AidVoucher`)
+- issue/redeem vouchers (`AidVoucher` ERC-1155 NFT; redeemed vouchers are burned)
 
 If no deployment exists for the connected chain, dashboard shows a missing deployment message.
 
