@@ -196,11 +196,11 @@ export default function App() {
 
   return (
     <Box className="unicef-shell">
-      <AppBar position="sticky" elevation={0} sx={{ bgcolor: '#005EB8' }}>
+      <AppBar position="sticky" elevation={0} sx={{ bgcolor: '#1CABE2' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Stack direction="row" spacing={1.2} alignItems="center">
             <VerifiedIcon />
-            <Typography variant="h6">ProofAid Humanitarian Console</Typography>
+            <Typography variant="h6">ProofAid Operations Console</Typography>
           </Stack>
           <Chip icon={<LanIcon />} label={activeDeploy ? `Chain ${activeDeploy.chainId}` : 'No Deployment'} color={activeDeploy ? 'success' : 'warning'} />
         </Toolbar>
@@ -208,9 +208,9 @@ export default function App() {
 
       <Container maxWidth="lg" sx={{ py: 3 }}>
         <Paper className="hero" sx={{ p: 3, mb: 2 }}>
-          <Typography variant="h4">UNICEF-style Aid Operations Dashboard</Typography>
+          <Typography variant="h4">Aid Operations Dashboard</Typography>
           <Typography sx={{ mt: 1, maxWidth: 760 }} color="text.secondary">
-            Field-ready voucher operations across Celo networks with transparent smart-contract actions.
+            Field-ready voucher operations across Celo networks with transparent smart-contract verification.
           </Typography>
         </Paper>
 
