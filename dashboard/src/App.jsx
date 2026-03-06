@@ -23,6 +23,7 @@ import BoltIcon from '@mui/icons-material/Bolt';
 import LanIcon from '@mui/icons-material/Lan';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { ethers } from 'ethers';
 
 const BUILTIN = {
@@ -75,6 +76,7 @@ export default function App() {
   const [abis, setAbis] = useState({ contracts: {} });
   const [activeDeploy, setActiveDeploy] = useState(null);
   const [log, setLog] = useState([]);
+  const [lastTxHash, setLastTxHash] = useState('');
   const [error, setError] = useState('');
 
   const [program, setProgram] = useState(defaultProgram);
@@ -175,6 +177,7 @@ export default function App() {
     try {
       setError('');
       const tx = await fn();
+      setLastTxHash(tx.hash);
       push(`${label} submitted: ${tx.hash}`);
       await tx.wait();
       push(`${label} confirmed`);
@@ -184,6 +187,12 @@ export default function App() {
       push(`ERROR: ${reason}`);
     }
   };
+
+  const explorerBase = activeDeploy?.chainId === 11142220
+    ? 'https://sepolia.celoscan.io'
+    : activeDeploy?.chainId === 42220
+      ? 'https://celoscan.io'
+      : '';
 
   return (
     <Box className="unicef-shell">
@@ -224,6 +233,41 @@ export default function App() {
                     <MenuItem value="devnet">Custom Devnet</MenuItem>
                   </Select>
                   <Button variant="outlined" onClick={switchNetwork}>Switch</Button>
+                </Stack>
+
+                <Stack direction="row" spacing={1} sx={{ mt: 1.5 }} flexWrap="wrap" useFlexGap>
+                  <Button
+                    size="small"
+                    variant="text"
+                    endIcon={<OpenInNewIcon />}
+                    href="https://faucet.celo.org/celo-sepolia"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Celo Sepolia Faucet
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="text"
+                    endIcon={<OpenInNewIcon />}
+                    href="https://sepolia.celoscan.io/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Sepolia Explorer
+                  </Button>
+                  {lastTxHash && explorerBase && (
+                    <Button
+                      size="small"
+                      variant="text"
+                      endIcon={<OpenInNewIcon />}
+                      href={`${explorerBase}/tx/${lastTxHash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Latest Tx
+                    </Button>
+                  )}
                 </Stack>
 
                 <Divider sx={{ my: 2 }} />

@@ -5,6 +5,10 @@
   "observability": {
     "enabled": true
   },
+  "build": {
+    "command": "npm --prefix dashboard ci && npm --prefix dashboard run build",
+    "watch_dir": "dashboard/src"
+  },
   "assets": {
     "directory": "dashboard/dist"
   },
