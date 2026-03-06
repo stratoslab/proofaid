@@ -1,0 +1,149 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/dhonampemba/Development/canton/proofaid/smart-contracts/contracts/AidProgram.sol": {
+      "lastModificationDate": 1772809100452,
+      "contentHash": "dee20f98907f746e54f436326570706e",
+      "sourceName": "contracts/AidProgram.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "AidProgram"
+      ]
+    },
+    "/Users/dhonampemba/Development/canton/proofaid/smart-contracts/contracts/AidVoucher.sol": {
+      "lastModificationDate": 1772809100457,
+      "contentHash": "9ec21214553b9c1d8ef00c3d248aa18c",
+      "sourceName": "contracts/AidVoucher.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "AidVoucher"
+      ]
+    },
+    "/Users/dhonampemba/Development/canton/proofaid/smart-contracts/contracts/BeneficiaryRegistry.sol": {
+      "lastModificationDate": 1772809100455,
+      "contentHash": "56c202c343cfd97ed062b04214b5039d",
+      "sourceName": "contracts/BeneficiaryRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "BeneficiaryRegistry"
+      ]
+    },
+    "/Users/dhonampemba/Development/canton/proofaid/smart-contracts/contracts/DistributionEvent.sol": {
+      "lastModificationDate": 1772809100459,
+      "contentHash": "9ca3005787c514ff270691e66040d021",
+      "sourceName": "contracts/DistributionEvent.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "DistributionEvent"
+      ]
+    }
+  }
+}
