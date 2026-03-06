@@ -8,7 +8,8 @@
     "deploy:alfajores": "hardhat run scripts/deploy.js --network alfajores",
     "deploy:sepolia": "hardhat run scripts/deploy.js --network celoSepolia",
     "deploy:mainnet": "hardhat run scripts/deploy.js --network celo",
-    "export:frontend": "node scripts/export-frontend-artifacts.js"
+    "export:frontend": "node scripts/export-frontend-artifacts.js",
+    "test:e2e:sepolia": "node scripts/e2e-sepolia.js"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.0.8",
