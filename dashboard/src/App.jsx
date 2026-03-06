@@ -93,7 +93,14 @@ export default function App() {
     load();
   }, []);
 
-  const push = (line) => setLog((prev) => [`${new Date().toLocaleTimeString()}  ${line}`, ...prev].slice(0, 80));
+  const push = (line, txHash = null) => {
+    const entry = { 
+      time: new Date().toLocaleTimeString(), 
+      message: line,
+      txHash: txHash 
+    };
+    setLog((prev) => [entry, ...prev].slice(0, 80));
+  };
 
   const connectedChain = async (p) => {
     const n = await p.getNetwork();
@@ -178,9 +185,9 @@ export default function App() {
       setError('');
       const tx = await fn();
       setLastTxHash(tx.hash);
-      push(`${label} submitted: ${tx.hash}`);
+      push(`${label} submitted`, tx.hash);
       await tx.wait();
-      push(`${label} confirmed`);
+      push(`${label} confirmed`, tx.hash);
     } catch (e) {
       const reason = e.reason || e.shortMessage || e.message;
       setError(reason);
@@ -377,8 +384,27 @@ export default function App() {
               <CardContent>
                 <Typography variant="h6" gutterBottom>Transaction Log</Typography>
                 <Stack spacing={0.7}>
-                  {log.length === 0 ? <Typography color="text.secondary">No transactions yet.</Typography> : log.map((item) => (
-                    <Paper key={item} variant="outlined" sx={{ p: 1, fontFamily: 'monospace', fontSize: 12 }}>{item}</Paper>
+                  {log.length === 0 ? <Typography color="text.secondary">No transactions yet.</Typography> : log.map((entry, idx) => (
+                    <Paper key={idx} variant="outlined" sx={{ p: 1, fontFamily: 'monospace', fontSize: 12 }}>
+                      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                        <Typography component="span" sx={{ fontFamily: 'monospace', fontSize: 12 }}>
+                          {entry.time}  {entry.message}
+                        </Typography>
+                        {entry.txHash && explorerBase && (
+                          <Button
+                            size="small"
+                            variant="text"
+                            endIcon={<OpenInNewIcon fontSize="small" />}
+                            href={`${explorerBase}/tx/${entry.txHash}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            sx={{ fontSize: 11, py: 0, minHeight: 'auto' }}
+                          >
+                            View Tx
+                          </Button>
+                        )}
+                      </Stack>
+                    </Paper>
                   ))}
                 </Stack>
               </CardContent>
