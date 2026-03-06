@@ -180,21 +180,3 @@ The demo shows one complete flow:
 - sync jobs, audit logs
 
 **Critical rule:** PII stays in database, not on-chain. On-chain only stores hashes/IDs/statuses.
-
-### Build phases
-
-**Phase 1** - Smart contracts, admin web app, backend + db  
-**Phase 2** - Field worker mobile app, QR flow, redemption flow  
-**Phase 3** - Donor dashboard, testnet transaction display, polished demo  
-**Phase 4** - Offline sync, permissions, reporting, deployment hardening
-
-### Minimum viable demo
-
-The demo feels real when it shows:
-1. "Here is the beneficiary"
-2. "Here is the voucher"
-3. "Here is the redemption"
-4. "Here is the blockchain proof"
-5. "Here is the donor visibility"
-
-Key details: QR code generation, instant "Redeemed" state change, transaction hash display, Celo explorer link, dashboard updates after redemption.
