@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <!-- Background gradient matching UNICEF theme -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3faff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#eef8ff;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="accent" cx="10%" cy="15%">
+      <stop offset="0%" style="stop-color:#d8f2ff;stop-opacity:0.8" />
+      <stop offset="60%" style="stop-color:#d8f2ff;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#d8f2ff;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <ellipse cx="120" cy="100" rx="400" ry="300" fill="url(#accent)"/>
+  
+  <!-- Decorative blockchain network -->
+  <g opacity="0.15" stroke="#1CABE2" stroke-width="2" fill="none">
+    <circle cx="950" cy="150" r="40"/>
+    <circle cx="1050" cy="250" r="35"/>
+    <circle cx="900" cy="300" r="30"/>
+    <line x1="980" y1="170" x2="1030" y2="230"/>
+    <line x1="940" y1="180" x2="920" y2="280"/>
+  </g>
+  
+  <!-- Main icon - verified shield -->
+  <g transform="translate(100, 180)">
+    <path d="M80 0 L140 20 L140 100 C140 150 110 190 80 220 C50 190 20 150 20 100 L20 20 Z" 
+          fill="#005EB8" opacity="0.95"/>
+    <path d="M60 100 L75 120 L105 80" 
+          stroke="white" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  
+  <!-- Title -->
+  <text x="300" y="260" font-family="'Public Sans', sans-serif" font-size="72" font-weight="800" fill="#005EB8">
+    ProofAid
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="300" y="320" font-family="'Public Sans', sans-serif" font-size="36" font-weight="500" fill="#1CABE2">
+    Transparent Humanitarian Aid Distribution
+  </text>
+  
+  <!-- Features -->
+  <g font-family="'Public Sans', sans-serif" font-size="24" fill="#374151">
+    <text x="300" y="400">
+      <tspan fill="#1CABE2">✓</tspan> Blockchain-verified vouchers on Celo
+    </text>
+    <text x="300" y="445">
+      <tspan fill="#1CABE2">✓</tspan> Real-time transparency for donors
+    </text>
+    <text x="300" y="490">
+      <tspan fill="#1CABE2">✓</tspan> Offline-ready field operations
+    </text>
+  </g>
+  
+  <!-- Footer badge -->
+  <rect x="300" y="540" width="180" height="45" rx="22.5" fill="#1CABE2" opacity="0.1"/>
+  <text x="390" y="570" font-family="'Public Sans', sans-serif" font-size="20" font-weight="600" 
+        fill="#005EB8" text-anchor="middle">
+    Powered by Celo
+  </text>
+</svg>
