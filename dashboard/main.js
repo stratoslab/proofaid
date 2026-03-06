@@ -1,3 +1,5 @@
+const { ethers } = window;
+
 const statusNode = document.getElementById("walletStatus");
 const deploymentNode = document.getElementById("deploymentInfo");
 const txLog = document.getElementById("txLog");

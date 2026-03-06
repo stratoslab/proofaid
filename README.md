@@ -2,29 +2,14 @@
 
 ProofAid is an open-source MVP for transparent humanitarian aid distribution on Celo-compatible infrastructure.
 
-## How It Works
-
-ProofAid enables transparent, blockchain-verified aid distribution:
-
-1. **Program Setup** - Aid organizations create distribution programs with budget allocations
-2. **Beneficiary Registration** - Recipients are registered and verified in the system
-3. **Voucher Distribution** - Digital vouchers are issued to beneficiaries for specific aid types
-4. **Redemption** - Beneficiaries redeem vouchers at authorized vendors/distribution points
-5. **Offline Queue** - All actions queue locally when internet is unavailable
-6. **Blockchain Sync** - Transactions sync to Celo blockchain when connectivity returns
-7. **Donor Dashboard** - Real-time transparency dashboard shows fund flow and impact metrics
-
-All transactions are recorded on-chain, providing immutable audit trails for donors and stakeholders.
-
 ## What is implemented
 
-- `backend/`: working Node.js API for programs, beneficiaries, vouchers, redemption, offline queue sync, and donor metrics.
-- `dashboard/`: lightweight transparency dashboard UI served by backend static hosting.
-- `smart-contracts/contracts/`: Solidity contracts for aid programs, beneficiary registry, voucher lifecycle, and distribution events.
-- `mobile-app/`: offline queue module that can be reused in React Native.
-- `docs/`: architecture and API references.
+- `backend/`: Node.js API for programs, beneficiaries, vouchers, redemption, offline queue sync, and donor metrics.
+- `dashboard/`: wallet-enabled web frontend for Celo network switch + on-chain contract actions.
+- `smart-contracts/`: Solidity contracts plus Hardhat compile/deploy/export scripts.
+- `mobile-app/`: offline queue module reusable in a React Native app.
 
-## Quickstart
+## Backend quickstart
 
 ```bash
 cd backend
@@ -34,7 +19,37 @@ npm start
 
 Open `http://localhost:4000`.
 
-## Core API
+## Smart contract quickstart
+
+```bash
+cd smart-contracts
+npm install
+cp .env.example .env
+# set CELO_PRIVATE_KEY and RPC values in .env
+npm run compile
+npm run deploy:alfajores
+npm run export:frontend
+```
+
+Deployment writes:
+
+- `smart-contracts/deployments/<network>.json`
+- `dashboard/contracts/deployments.json` (addresses)
+- `dashboard/contracts/abis.json` (ABIs)
+
+## Frontend wallet demo
+
+The dashboard supports:
+
+- wallet connect (MetaMask/Celo-compatible)
+- network switching: Alfajores, Celo Mainnet, custom devnet
+- create program on-chain (`AidProgram`)
+- register beneficiary hash (`BeneficiaryRegistry`)
+- issue/redeem vouchers (`AidVoucher`)
+
+If no deployment exists for the connected chain, dashboard shows a missing deployment message.
+
+## Core backend API
 
 - `POST /program`
 - `POST /beneficiary`
@@ -45,10 +60,141 @@ Open `http://localhost:4000`.
 - `GET /dashboard/metrics`
 - `GET /transactions`
 
-See [docs/api.md](./docs/api.md) for request/response examples.
+See `docs/api.md` for payload examples.
 
-## Notes
+---
 
-- Backend currently simulates Celo transaction hashes via `CeloLedgerAdapter`.
-- Data is persisted in `backend/data/db.json`.
-- Contracts are ready to deploy in a Hardhat/Foundry setup as next step.
+## Demo vs Deployment
+
+**Demo = believable prototype**  
+**Deployment = operational system**
+
+### Demo scope (current MVP)
+
+The demo shows one complete flow:
+
+1. NGO admin creates an aid program
+2. Field worker registers a beneficiary
+3. System issues a voucher
+4. Field worker redeems the voucher when aid is delivered
+5. Transaction is recorded on Celo
+6. Donor dashboard updates
+
+**Three views:**
+
+- **Admin dashboard** - Create program, view budget, issue vouchers, see redemption stats
+- **Field worker app** - Search/select beneficiary, scan QR or enter code, redeem voucher
+- **Donor dashboard** - Total beneficiaries, vouchers issued/redeemed, recent on-chain transactions
+
+**Demo features:**
+
+- Program creation (name, location, aid type, budget, dates)
+- Beneficiary registration (name/ID, region, unique ID, QR code)
+- Voucher issuance (assign to beneficiary, show status)
+- Voucher redemption (scan QR or type code, mark redeemed, write to testnet)
+- Dashboard (live counts, transaction list, program overview)
+
+**Acceptable shortcuts:**
+
+- Celo Alfajores testnet
+- Mock beneficiaries
+- Manual sync instead of full offline engine
+- Single voucher type
+- Simple admin-controlled wallet
+- Mock maps and partner names
+
+### Real deployment requirements
+
+**Core capabilities needed:**
+
+**A. Program management**
+- Multiple aid programs
+- Budget tracking by program
+- Multiple aid types
+- Role-based access
+
+**B. Beneficiary management**
+- Safe registration
+- Duplicate prevention
+- Off-chain PII storage
+- Updates and deactivation
+
+**C. Voucher lifecycle**
+- Issue, redeem, expire, revoke
+- Prevent double redemption
+
+**D. Field operations**
+- Offline mode
+- Local transaction queue
+- Auto-sync when connected
+- Clear sync status
+
+**E. Auditability**
+- Link redemptions to: program, beneficiary, field worker, timestamp, location
+- Immutable on-chain records
+- Exportable reports
+
+**F. Reporting**
+- Dashboard by program
+- Aggregated metrics
+- CSV/PDF exports
+- Public and private views
+
+**G. Security**
+- Role permissions
+- Secure login
+- Device/session management
+- Encrypted local storage
+- Smart contract safeguards
+
+### User flows
+
+**Admin:**
+1. Login → 2. Create program → 3. Add field workers → 4. Register beneficiaries → 5. Issue vouchers → 6. Monitor redemption
+
+**Field worker:**
+1. Login on mobile → 2. Select program → 3. Find/register beneficiary → 4. Scan QR → 5. Deliver aid → 6. Tap redeem → 7. See confirmation (or "queued for sync" if offline)
+
+**Donor:**
+1. Open dashboard → 2. View allocated/redeemed totals → 3. View beneficiary counts → 4. View verified transactions → 5. Export report
+
+### Smart contracts
+
+**Demo contracts:**
+- Program registry (create program)
+- Beneficiary registry (register beneficiary hash)
+- Voucher contract (issue, redeem, prevent double redemption)
+- Event logging (emit events for dashboard)
+
+**Deployment additions:**
+- Role controls
+- Expiration and revocation
+- Pausing and upgrade strategy
+- Audit-ready event design
+
+### Database design
+
+**Required tables:**
+- users, organizations, programs
+- beneficiaries, vouchers, redemptions
+- sync jobs, audit logs
+
+**Critical rule:** PII stays in database, not on-chain. On-chain only stores hashes/IDs/statuses.
+
+### Build phases
+
+**Phase 1** - Smart contracts, admin web app, backend + db  
+**Phase 2** - Field worker mobile app, QR flow, redemption flow  
+**Phase 3** - Donor dashboard, testnet transaction display, polished demo  
+**Phase 4** - Offline sync, permissions, reporting, deployment hardening
+
+### Minimum viable demo
+
+The demo feels real when it shows:
+1. "Here is the beneficiary"
+2. "Here is the voucher"
+3. "Here is the redemption"
+4. "Here is the blockchain proof"
+5. "Here is the donor visibility"
+
+Key details: QR code generation, instant "Redeemed" state change, transaction hash display, Celo explorer link, dashboard updates after redemption.
