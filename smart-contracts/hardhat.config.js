@@ -26,6 +26,11 @@ module.exports = {
       chainId: 42220,
       accounts
     },
+    celoSepolia: {
+      url: process.env.CELO_SEPOLIA_RPC_URL || "https://forno.celo-sepolia.celo-testnet.org",
+      chainId: 11142220,
+      accounts
+    },
     devnet: {
       url: process.env.CELO_DEVNET_RPC_URL || "",
       chainId: Number(process.env.CELO_DEVNET_CHAIN_ID || 62320),

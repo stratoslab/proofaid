@@ -8,6 +8,15 @@
   "assets": {
     "directory": "dashboard"
   },
+  "vars": {
+    "CELO_NETWORK_KEY": "celoSepolia",
+    "CELO_CHAIN_ID": "11142220",
+    "CELO_RPC_URL": "https://forno.celo-sepolia.celo-testnet.org",
+    "AID_PROGRAM_ADDRESS": "0xb15BDE2A727156459172d78F86aF13374D66B9ea",
+    "BENEFICIARY_REGISTRY_ADDRESS": "0x94b73ad2FbE7F88e8B21735bBa1Fa2fCf4BB97d8",
+    "AID_VOUCHER_ADDRESS": "0xf8EFeb20745a273d6666D64855b1391007B6A820",
+    "DISTRIBUTION_EVENT_ADDRESS": "0x8998a117423A86204Bf70b8bfB325D21108F90D4"
+  },
   "compatibility_flags": [
     "nodejs_compat"
   ]

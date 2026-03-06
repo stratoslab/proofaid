@@ -21,8 +21,11 @@ npm run deploy:alfajores
 Optional:
 
 ```bash
+npm run deploy:sepolia
 npm run deploy:mainnet
 ```
+
+Note: if Alfajores RPC is unavailable in your environment, use Sepolia (`deploy:sepolia`), which is the active Celo testnet.
 
 ## 3. Export ABI for dashboard
 

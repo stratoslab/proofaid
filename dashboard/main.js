@@ -28,6 +28,15 @@ const BUILTIN_NETWORKS = {
     rpcUrls: ["https://forno.celo.org"],
     nativeCurrency: { name: "CELO", symbol: "CELO", decimals: 18 },
     blockExplorerUrls: ["https://celoscan.io"]
+  },
+  celoSepolia: {
+    key: "celoSepolia",
+    chainId: 11142220,
+    chainHex: "0xaa044c",
+    chainName: "Celo Sepolia",
+    rpcUrls: ["https://forno.celo-sepolia.celo-testnet.org"],
+    nativeCurrency: { name: "CELO", symbol: "CELO", decimals: 18 },
+    blockExplorerUrls: ["https://celo-sepolia.blockscout.com"]
   }
 };
 
