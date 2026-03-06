@@ -3,84 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ProofAid Dashboard</title>
-    <link rel="stylesheet" href="./styles.css" />
-    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+    <title>ProofAid UNICEF Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <main class="app">
-      <header>
-        <h1>ProofAid On-Chain Dashboard</h1>
-        <p>Connect wallet, switch Celo networks, and execute smart-contract actions.</p>
-      </header>
-
-      <section class="panel">
-        <h2>Wallet</h2>
-        <div class="row">
-          <button id="connectWallet">Connect Wallet</button>
-          <select id="networkSelect">
-            <option value="alfajores">Alfajores (44787)</option>
-            <option value="celoSepolia">Celo Sepolia (11142220)</option>
-            <option value="celo">Celo Mainnet (42220)</option>
-            <option value="devnet">Custom Devnet</option>
-          </select>
-          <button id="switchNetwork">Switch Network</button>
-        </div>
-        <div class="grid-2">
-          <input id="devnetName" placeholder="Devnet name (e.g. Celo Devnet)" />
-          <input id="devnetRpc" placeholder="Devnet RPC URL" />
-          <input id="devnetChainId" placeholder="Devnet chain id (decimal)" />
-          <button id="saveDevnet">Save Devnet</button>
-        </div>
-        <p id="walletStatus" class="status">Disconnected</p>
-      </section>
-
-      <section class="panel">
-        <h2>Deployment</h2>
-        <pre id="deploymentInfo" class="code"></pre>
-      </section>
-
-      <section class="panel">
-        <h2>On-Chain Actions</h2>
-
-        <form id="createProgramForm" class="form">
-          <h3>Create Program (AidProgram)</h3>
-          <input name="name" placeholder="Program name" required />
-          <input name="description" placeholder="Description" required />
-          <input name="budget" type="number" placeholder="Budget" min="1" required />
-          <input name="startDate" type="number" placeholder="Start unix timestamp" required />
-          <input name="endDate" type="number" placeholder="End unix timestamp" required />
-          <button type="submit">Create Program On-Chain</button>
-        </form>
-
-        <form id="registerBeneficiaryForm" class="form">
-          <h3>Register Beneficiary (BeneficiaryRegistry)</h3>
-          <input name="identityInput" placeholder="Identity seed (name|birthdate|region)" required />
-          <input name="programId" type="number" placeholder="Program ID" required />
-          <button type="submit">Register Beneficiary Hash</button>
-        </form>
-
-        <form id="issueVoucherForm" class="form">
-          <h3>Issue Voucher (AidVoucher)</h3>
-          <input name="programId" type="number" placeholder="Program ID" required />
-          <input name="identityInput" placeholder="Identity seed (same as above)" required />
-          <input name="expiryDays" type="number" min="1" value="30" required />
-          <button type="submit">Issue Voucher</button>
-        </form>
-
-        <form id="redeemVoucherForm" class="form">
-          <h3>Redeem Voucher (AidVoucher)</h3>
-          <input name="voucherId" type="number" placeholder="Voucher ID" required />
-          <button type="submit">Redeem Voucher</button>
-        </form>
-      </section>
-
-      <section class="panel">
-        <h2>Transaction Log</h2>
-        <ul id="txLog" class="list"></ul>
-      </section>
-    </main>
-
-    <script type="module" src="./main.js"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

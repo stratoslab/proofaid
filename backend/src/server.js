@@ -1,5 +1,6 @@
 import path from "node:path";
 import crypto from "node:crypto";
+import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import express from "express";
 import cors from "cors";
@@ -19,7 +20,9 @@ const ledger = new CeloLedgerAdapter();
 
 app.use(cors());
 app.use(express.json());
-app.use("/", express.static(path.join(__dirname, "..", "..", "dashboard")));
+const dashboardRoot = path.join(__dirname, "..", "..", "dashboard");
+const dashboardDist = path.join(dashboardRoot, "dist");
+app.use("/", express.static(fs.existsSync(dashboardDist) ? dashboardDist : dashboardRoot));
 
 const createProgramSchema = z.object({
   name: z.string().min(2),

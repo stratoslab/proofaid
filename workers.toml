@@ -2,7 +2,7 @@ name = "proofaid"
 compatibility_date = "2025-09-27"
 
 [assets]
-directory = "dashboard"
+directory = "dashboard/dist"
 
 [vars]
 CELO_NETWORK_KEY = "celoSepolia"

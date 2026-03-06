@@ -1,5 +1,6 @@
 node_modules/
 backend/node_modules/
+dashboard/dist/
 backend/data/
 .DS_Store
 

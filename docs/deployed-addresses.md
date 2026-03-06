@@ -19,5 +19,7 @@
 
 - `dashboard/contracts/deployments.json` (network -> address mapping)
 - `dashboard/contracts/abis.json` (contract ABIs)
+- `dashboard/public/contracts/deployments.json` (network -> address mapping)
+- `dashboard/public/contracts/abis.json` (contract ABIs)
 
 Dashboard network selection should be set to **Celo Sepolia (11142220)**.

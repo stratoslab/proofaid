@@ -31,10 +31,16 @@ function main() {
     output.contracts[name] = { abi: readAbi(name) };
   }
 
-  const outPath = path.resolve(__dirname, "..", "..", "dashboard", "contracts", "abis.json");
-  fs.mkdirSync(path.dirname(outPath), { recursive: true });
-  fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
-  console.log(`Wrote ${outPath}`);
+  const outputs = [
+    path.resolve(__dirname, "..", "..", "dashboard", "contracts", "abis.json"),
+    path.resolve(__dirname, "..", "..", "dashboard", "public", "contracts", "abis.json")
+  ];
+
+  for (const outPath of outputs) {
+    fs.mkdirSync(path.dirname(outPath), { recursive: true });
+    fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
+    console.log(`Wrote ${outPath}`);
+  }
 }
 
 main();

@@ -6,7 +6,7 @@
     "enabled": true
   },
   "assets": {
-    "directory": "dashboard"
+    "directory": "dashboard/dist"
   },
   "vars": {
     "CELO_NETWORK_KEY": "celoSepolia",

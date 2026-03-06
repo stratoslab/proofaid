@@ -5,7 +5,7 @@ ProofAid is an open-source MVP for transparent humanitarian aid distribution on 
 ## What is implemented
 
 - `backend/`: Node.js API for programs, beneficiaries, vouchers, redemption, offline queue sync, and donor metrics.
-- `dashboard/`: wallet-enabled web frontend for Celo network switch + on-chain contract actions.
+- `dashboard/`: React + MUI UNICEF-themed web frontend for Celo network switch + on-chain contract actions.
 - `smart-contracts/`: Solidity contracts plus Hardhat compile/deploy/export scripts.
 - `mobile-app/`: offline queue module reusable in a React Native app.
 
@@ -19,6 +19,16 @@ npm start
 
 Open `http://localhost:4000`.
 
+## Frontend quickstart
+
+```bash
+cd dashboard
+npm install
+npm run build
+```
+
+The backend serves `dashboard/dist` in production mode.
+
 ## Smart contract quickstart
 
 ```bash
@@ -27,15 +37,15 @@ npm install
 cp .env.example .env
 # set CELO_PRIVATE_KEY and RPC values in .env
 npm run compile
-npm run deploy:alfajores
+npm run deploy:sepolia
 npm run export:frontend
 ```
 
 Deployment writes:
 
 - `smart-contracts/deployments/<network>.json`
-- `dashboard/contracts/deployments.json` (addresses)
-- `dashboard/contracts/abis.json` (ABIs)
+- `dashboard/public/contracts/deployments.json` (addresses)
+- `dashboard/public/contracts/abis.json` (ABIs)
 
 ## Frontend wallet demo
 

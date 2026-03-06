@@ -34,14 +34,16 @@ npm run export:frontend
 ```
 
 This updates `dashboard/contracts/abis.json`.
+This also updates `dashboard/public/contracts/abis.json` for the React build.
 
 ## 4. Dashboard usage
 
 1. Run backend: `cd backend && npm install && npm start`
-2. Open `http://localhost:4000`
-3. Connect wallet
-4. Switch network (Alfajores/Mainnet/devnet)
-5. Use the on-chain forms to submit transactions
+2. Build dashboard: `cd dashboard && npm install && npm run build`
+3. Open `http://localhost:4000`
+4. Connect wallet
+5. Switch network (Sepolia/Mainnet/devnet)
+6. Use the on-chain forms to submit transactions
 
 ## 5. Devnet support
 

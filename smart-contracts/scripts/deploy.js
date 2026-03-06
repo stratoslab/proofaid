@@ -42,19 +42,22 @@ async function main() {
   ensureDir(deploymentsDir);
   fs.writeFileSync(path.join(deploymentsDir, `${networkName}.json`), JSON.stringify(payload, null, 2));
 
-  const dashboardContractsDir = path.resolve(__dirname, "..", "..", "dashboard", "contracts");
-  ensureDir(dashboardContractsDir);
+  const dashboardDirs = [
+    path.resolve(__dirname, "..", "..", "dashboard", "contracts"),
+    path.resolve(__dirname, "..", "..", "dashboard", "public", "contracts")
+  ];
 
-  const dashboardDeployFile = path.join(dashboardContractsDir, "deployments.json");
-  let dashboardDeployments = {};
-  if (fs.existsSync(dashboardDeployFile)) {
-    dashboardDeployments = JSON.parse(fs.readFileSync(dashboardDeployFile, "utf8"));
+  for (const dir of dashboardDirs) {
+    ensureDir(dir);
+    const deployFile = path.join(dir, "deployments.json");
+    let dashboardDeployments = {};
+    if (fs.existsSync(deployFile)) {
+      dashboardDeployments = JSON.parse(fs.readFileSync(deployFile, "utf8"));
+    }
+    dashboardDeployments[networkName] = payload;
+    fs.writeFileSync(deployFile, JSON.stringify(dashboardDeployments, null, 2));
+    console.log(`Deployment metadata written to ${path.relative(process.cwd(), deployFile)}`);
   }
-
-  dashboardDeployments[networkName] = payload;
-  fs.writeFileSync(dashboardDeployFile, JSON.stringify(dashboardDeployments, null, 2));
-
-  console.log(`Deployment metadata written to ${path.relative(process.cwd(), dashboardDeployFile)}`);
 }
 
 main().catch((error) => {
