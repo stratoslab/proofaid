@@ -2,29 +2,25 @@ import { useEffect, useState } from 'react';
 import {
   Alert,
   AppBar,
-  Badge,
   Box,
-  Button,
-  Card,
-  CardContent,
   Chip,
   Container,
-  Divider,
-  Grid,
-  MenuItem,
   Paper,
-  Select,
   Stack,
-  TextField,
+  Tab,
+  Tabs,
   Toolbar,
   Typography
 } from '@mui/material';
-import BoltIcon from '@mui/icons-material/Bolt';
-import LanIcon from '@mui/icons-material/Lan';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import LanIcon from '@mui/icons-material/Lan';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import EngineeringIcon from '@mui/icons-material/Engineering';
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import { ethers } from 'ethers';
+import AdminTab from './components/AdminTab';
+import FieldWorkerTab from './components/FieldWorkerTab';
+import DonorTab from './components/DonorTab';
 
 const BUILTIN = {
   alfajores: {
@@ -55,20 +51,12 @@ const BUILTIN = {
 
 const mkNative = { name: 'CELO', symbol: 'CELO', decimals: 18 };
 
-const defaultProgram = () => {
-  const now = Math.floor(Date.now() / 1000);
-  return {
-    name: 'School Nutrition Program',
-    description: 'Daily meal voucher distribution',
-    budget: '50000',
-    startDate: String(now),
-    endDate: String(now + 30 * 24 * 60 * 60)
-  };
-};
-
 export default function App() {
+  const [role, setRole] = useState(0);
   const [networkKey, setNetworkKey] = useState('celoSepolia');
-  const [devnet, setDevnet] = useState(() => JSON.parse(localStorage.getItem('proofaid_devnet') || '{"name":"","rpcUrl":"","chainId":""}'));
+  const [devnet, setDevnet] = useState(() =>
+    JSON.parse(localStorage.getItem('proofaid_devnet') || '{"name":"","rpcUrl":"","chainId":""}')
+  );
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [address, setAddress] = useState('');
@@ -78,15 +66,18 @@ export default function App() {
   const [log, setLog] = useState([]);
   const [lastTxHash, setLastTxHash] = useState('');
   const [error, setError] = useState('');
+  const [createdPrograms, setCreatedPrograms] = useState([]);
+  const [issuedVouchers, setIssuedVouchers] = useState([]);
 
-  const [program, setProgram] = useState(defaultProgram);
-  const [beneficiary, setBeneficiary] = useState({ identityInput: '', programId: '1' });
-  const [voucher, setVoucher] = useState({ programId: '1', identityInput: '', expiryDays: '30' });
-  const [redeemId, setRedeemId] = useState('1');
+  const addProgram = (prog) => setCreatedPrograms((prev) => [...prev, prog]);
+  const addVoucher = (v) => setIssuedVouchers((prev) => [...prev, v]);
 
   useEffect(() => {
     const load = async () => {
-      const [d, a] = await Promise.all([fetch('/contracts/deployments.json'), fetch('/contracts/abis.json')]);
+      const [d, a] = await Promise.all([
+        fetch('/contracts/deployments.json'),
+        fetch('/contracts/abis.json')
+      ]);
       if (d.ok) setDeployments(await d.json());
       if (a.ok) setAbis(await a.json());
     };
@@ -94,17 +85,15 @@ export default function App() {
   }, []);
 
   const push = (line, txHash = null) => {
-    const entry = { 
-      time: new Date().toLocaleTimeString(), 
-      message: line,
-      txHash: txHash 
-    };
+    const entry = { time: new Date().toLocaleTimeString(), message: line, txHash };
     setLog((prev) => [entry, ...prev].slice(0, 80));
   };
 
   const connectedChain = async (p) => {
     const n = await p.getNetwork();
-    const deploy = Object.values(deployments).find((x) => Number(x.chainId) === Number(n.chainId));
+    const deploy = Object.values(deployments).find(
+      (x) => Number(x.chainId) === Number(n.chainId)
+    );
     setActiveDeploy(deploy || null);
   };
 
@@ -150,12 +139,21 @@ export default function App() {
       const n = cfg(networkKey);
       if (!n) throw new Error('Devnet config is incomplete.');
       try {
-        await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: n.chainHex }] });
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: n.chainHex }]
+        });
       } catch (e) {
         if (e.code === 4902) {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
-            params: [{ chainId: n.chainHex, chainName: n.chainName, rpcUrls: n.rpcUrls, nativeCurrency: mkNative, blockExplorerUrls: n.blockExplorerUrls }]
+            params: [{
+              chainId: n.chainHex,
+              chainName: n.chainName,
+              rpcUrls: n.rpcUrls,
+              nativeCurrency: mkNative,
+              blockExplorerUrls: n.blockExplorerUrls
+            }]
           });
         } else {
           throw e;
@@ -169,7 +167,8 @@ export default function App() {
     }
   };
 
-  const identityHash = (raw) => ethers.sha256(ethers.toUtf8Bytes(String(raw).trim().toLowerCase()));
+  const identityHash = (raw) =>
+    ethers.sha256(ethers.toUtf8Bytes(String(raw).trim().toLowerCase()));
 
   const contract = (name) => {
     if (!signer) throw new Error('Connect wallet first.');
@@ -180,14 +179,15 @@ export default function App() {
     return new ethers.Contract(addr, abi, signer);
   };
 
-  const txWrap = async (label, fn) => {
+  const txWrap = async (label, fn, onConfirm) => {
     try {
       setError('');
       const tx = await fn();
       setLastTxHash(tx.hash);
       push(`${label} submitted`, tx.hash);
-      await tx.wait();
+      const receipt = await tx.wait();
       push(`${label} confirmed`, tx.hash);
+      if (onConfirm) onConfirm(receipt);
     } catch (e) {
       const reason = e.reason || e.shortMessage || e.message;
       setError(reason);
@@ -195,11 +195,21 @@ export default function App() {
     }
   };
 
-  const explorerBase = activeDeploy?.chainId === 11142220
-    ? 'https://sepolia.celoscan.io'
-    : activeDeploy?.chainId === 42220
-      ? 'https://celoscan.io'
-      : '';
+  const explorerBase =
+    activeDeploy?.chainId === 11142220
+      ? 'https://sepolia.celoscan.io'
+      : activeDeploy?.chainId === 42220
+        ? 'https://celoscan.io'
+        : '';
+
+  const shared = {
+    address, connect, networkKey, setNetworkKey, switchNetwork,
+    devnet, setDevnet, saveDevnet, activeDeploy,
+    contract, txWrap, identityHash,
+    log, explorerBase, lastTxHash,
+    networks: Object.entries(BUILTIN),
+    createdPrograms, issuedVouchers, addProgram, addVoucher
+  };
 
   return (
     <Box className="unicef-shell">
@@ -207,9 +217,13 @@ export default function App() {
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Stack direction="row" spacing={1.2} alignItems="center">
             <VerifiedIcon />
-            <Typography variant="h6">ProofAid Operations Console</Typography>
+            <Typography variant="h6">ProofAid</Typography>
           </Stack>
-          <Chip icon={<LanIcon />} label={activeDeploy ? `Chain ${activeDeploy.chainId}` : 'No Deployment'} color={activeDeploy ? 'success' : 'warning'} />
+          <Chip
+            icon={<LanIcon />}
+            label={activeDeploy ? `Chain ${activeDeploy.chainId}` : 'No Deployment'}
+            color={activeDeploy ? 'success' : 'warning'}
+          />
         </Toolbar>
       </AppBar>
 
@@ -221,196 +235,29 @@ export default function App() {
           </Typography>
         </Paper>
 
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        <Paper sx={{ mb: 2 }}>
+          <Tabs
+            value={role}
+            onChange={(_, v) => setRole(v)}
+            variant="fullWidth"
+            textColor="primary"
+            indicatorColor="primary"
+          >
+            <Tab icon={<AdminPanelSettingsIcon />} label="Admin" iconPosition="start" />
+            <Tab icon={<EngineeringIcon />} label="Field Worker" iconPosition="start" />
+            <Tab icon={<VolunteerActivismIcon />} label="Donor" iconPosition="start" />
+          </Tabs>
+        </Paper>
 
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>Wallet & Networks</Typography>
-                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  <Button variant="contained" startIcon={<AccountBalanceWalletIcon />} onClick={connect}>Connect Wallet</Button>
-                  <Badge color="secondary" badgeContent={address ? 'Connected' : 'Offline'}><BoltIcon /></Badge>
-                </Stack>
-                <Typography sx={{ mt: 1.5 }} variant="body2">{address || 'No wallet connected'}</Typography>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
+            {error}
+          </Alert>
+        )}
 
-                <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                  <Select value={networkKey} onChange={(e) => setNetworkKey(e.target.value)} size="small" sx={{ minWidth: 220 }}>
-                    {Object.entries(BUILTIN).map(([k, v]) => <MenuItem key={k} value={k}>{v.label}</MenuItem>)}
-                    <MenuItem value="devnet">Custom Devnet</MenuItem>
-                  </Select>
-                  <Button variant="outlined" onClick={switchNetwork}>Switch</Button>
-                </Stack>
-
-                <Stack direction="row" spacing={1} sx={{ mt: 1.5 }} flexWrap="wrap" useFlexGap>
-                  <Button
-                    size="small"
-                    variant="text"
-                    endIcon={<OpenInNewIcon />}
-                    href="https://faucet.celo.org/celo-sepolia"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Celo Sepolia Faucet
-                  </Button>
-                  <Button
-                    size="small"
-                    variant="text"
-                    endIcon={<OpenInNewIcon />}
-                    href="https://sepolia.celoscan.io/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Sepolia Explorer
-                  </Button>
-                  {lastTxHash && explorerBase && (
-                    <Button
-                      size="small"
-                      variant="text"
-                      endIcon={<OpenInNewIcon />}
-                      href={`${explorerBase}/tx/${lastTxHash}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Latest Tx
-                    </Button>
-                  )}
-                </Stack>
-
-                <Divider sx={{ my: 2 }} />
-                <Typography variant="subtitle2">Custom Devnet</Typography>
-                <Stack spacing={1} sx={{ mt: 1 }}>
-                  <TextField label="Name" size="small" value={devnet.name || ''} onChange={(e) => setDevnet({ ...devnet, name: e.target.value })} />
-                  <TextField label="RPC URL" size="small" value={devnet.rpcUrl || ''} onChange={(e) => setDevnet({ ...devnet, rpcUrl: e.target.value })} />
-                  <TextField label="Chain ID" size="small" value={devnet.chainId || ''} onChange={(e) => setDevnet({ ...devnet, chainId: e.target.value })} />
-                  <Button variant="text" onClick={saveDevnet}>Save Devnet</Button>
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>Deployment Context</Typography>
-                <pre className="deploy-pre">{JSON.stringify(activeDeploy || { status: 'No deployment on active chain' }, null, 2)}</pre>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>On-Chain Actions</Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
-                    <Stack spacing={1}>
-                      <Typography fontWeight={700}>Create Program</Typography>
-                      <TextField label="Name" size="small" value={program.name} onChange={(e) => setProgram({ ...program, name: e.target.value })} />
-                      <TextField label="Description" size="small" value={program.description} onChange={(e) => setProgram({ ...program, description: e.target.value })} />
-                      <TextField label="Budget" size="small" value={program.budget} onChange={(e) => setProgram({ ...program, budget: e.target.value })} />
-                      <TextField label="Start Timestamp" size="small" value={program.startDate} onChange={(e) => setProgram({ ...program, startDate: e.target.value })} />
-                      <TextField label="End Timestamp" size="small" value={program.endDate} onChange={(e) => setProgram({ ...program, endDate: e.target.value })} />
-                      <Button
-                        variant="contained"
-                        onClick={() => txWrap(
-                          'createProgram',
-                          () => contract('AidProgram').createProgram(
-                            program.name,
-                            program.description,
-                            BigInt(program.budget),
-                            BigInt(program.startDate),
-                            BigInt(program.endDate)
-                          )
-                        )}
-                      >
-                        Submit Program
-                      </Button>
-                    </Stack>
-                  </Grid>
-
-                  <Grid item xs={12} md={6}>
-                    <Stack spacing={1}>
-                      <Typography fontWeight={700}>Beneficiary + Voucher</Typography>
-                      <TextField label="Identity Seed (name|birthdate|region)" size="small" value={beneficiary.identityInput} onChange={(e) => setBeneficiary({ ...beneficiary, identityInput: e.target.value })} />
-                      <TextField label="Program ID" size="small" value={beneficiary.programId} onChange={(e) => setBeneficiary({ ...beneficiary, programId: e.target.value })} />
-                      <Button
-                        variant="outlined"
-                        onClick={() => txWrap(
-                          'registerBeneficiary',
-                          () => contract('BeneficiaryRegistry').registerBeneficiary(
-                            identityHash(beneficiary.identityInput),
-                            BigInt(beneficiary.programId)
-                          )
-                        )}
-                      >
-                        Register Beneficiary Hash
-                      </Button>
-
-                      <TextField label="Voucher Program ID" size="small" value={voucher.programId} onChange={(e) => setVoucher({ ...voucher, programId: e.target.value })} />
-                      <TextField label="Voucher Identity Seed" size="small" value={voucher.identityInput} onChange={(e) => setVoucher({ ...voucher, identityInput: e.target.value })} />
-                      <TextField label="Expiry Days" size="small" value={voucher.expiryDays} onChange={(e) => setVoucher({ ...voucher, expiryDays: e.target.value })} />
-                      <Button
-                        variant="outlined"
-                        onClick={() => txWrap(
-                          'issueVoucher',
-                          () => contract('AidVoucher').issueVoucher(
-                            BigInt(voucher.programId),
-                            identityHash(voucher.identityInput),
-                            BigInt(voucher.expiryDays)
-                          )
-                        )}
-                      >
-                        Issue Voucher
-                      </Button>
-
-                      <TextField label="Redeem Voucher ID" size="small" value={redeemId} onChange={(e) => setRedeemId(e.target.value)} />
-                      <Button
-                        color="warning"
-                        variant="contained"
-                        onClick={() => txWrap('redeemVoucher', () => contract('AidVoucher').redeemVoucher(BigInt(redeemId)))}
-                      >
-                        Redeem Voucher
-                      </Button>
-                    </Stack>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>Transaction Log</Typography>
-                <Stack spacing={0.7}>
-                  {log.length === 0 ? <Typography color="text.secondary">No transactions yet.</Typography> : log.map((entry, idx) => (
-                    <Paper key={idx} variant="outlined" sx={{ p: 1, fontFamily: 'monospace', fontSize: 12 }}>
-                      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                        <Typography component="span" sx={{ fontFamily: 'monospace', fontSize: 12 }}>
-                          {entry.time}  {entry.message}
-                        </Typography>
-                        {entry.txHash && explorerBase && (
-                          <Button
-                            size="small"
-                            variant="text"
-                            endIcon={<OpenInNewIcon fontSize="small" />}
-                            href={`${explorerBase}/tx/${entry.txHash}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            sx={{ fontSize: 11, py: 0, minHeight: 'auto' }}
-                          >
-                            View Tx
-                          </Button>
-                        )}
-                      </Stack>
-                    </Paper>
-                  ))}
-                </Stack>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        {role === 0 && <AdminTab {...shared} />}
+        {role === 1 && <FieldWorkerTab {...shared} />}
+        {role === 2 && <DonorTab {...shared} />}
       </Container>
     </Box>
   );
